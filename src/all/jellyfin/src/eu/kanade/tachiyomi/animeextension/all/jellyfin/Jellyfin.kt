@@ -496,6 +496,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
         val videoList = mutableListOf<Video>()
         val subtitleList = mutableListOf<Track>()
         val externalSubtitleList = mutableListOf<Track>()
+        val attachments = mutableListOf<Track>()
 
         var audioTrackIndex: Int? = null
         var subtitleTrackIndex: Int? = null
@@ -537,6 +538,18 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
             }
         }
 
+        mediaSource.mediaAttachments.forEach { attachment ->
+            val codec = attachment.codec ?: ""
+            if (codec.contains("ttf", ignoreCase = true) ||
+                codec.contains("otf", ignoreCase = true) ||
+                codec.contains("woff", ignoreCase = true)) {
+
+                val attachmentUrl = "$baseUrl/Videos/${itemId}/${mediaSource.id}/Attachments/${attachment.index}?api_key=${preferences.apiKey}"
+
+                attachments.add(Track(attachmentUrl, attachment.fileName ?: "Font ${attachment.index}"))
+            }
+        }
+
         val sessionData = getSessionData(
             videoBitrate = Int.MAX_VALUE,
             audioBitrate = Int.MAX_VALUE,
@@ -559,6 +572,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
                 preferred = mediaSource.bitrate == preferences.quality.toInt(),
                 subtitleTracks = externalSubtitleList,
                 initialized = true,
+                attachments = attachments
             )
         } else {
             val staticUrl = baseUrl.toHttpUrl().newBuilder().apply {
@@ -577,6 +591,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
                 preferred = mediaSource.bitrate == preferences.quality.toInt(),
                 subtitleTracks = externalSubtitleList,
                 initialized = true,
+                attachments = attachments
             )
         }
 
@@ -599,6 +614,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
                     headers = videoHeaders,
                     preferred = it.videoBitrate == preferences.quality.toInt(),
                     subtitleTracks = subtitleList,
+                    attachments = attachments,
                     internalData = TranscodingInfo(
                         videoBitrate = it.videoBitrate,
                         audioBitrate = it.audioBitrate,

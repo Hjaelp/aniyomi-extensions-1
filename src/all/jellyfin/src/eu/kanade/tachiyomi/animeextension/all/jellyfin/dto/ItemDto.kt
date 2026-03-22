@@ -263,6 +263,7 @@ data class MediaDto(
     val supportsTranscoding: Boolean,
     val supportsDirectStream: Boolean,
     val mediaStreams: List<MediaStreamDto>,
+    val mediaAttachments: List<MediaAttachmentDto> = emptyList(),
 ) {
     @Serializable
     data class MediaStreamDto(
@@ -274,5 +275,13 @@ data class MediaDto(
         val language: String? = null,
         val displayTitle: String? = null,
         val bitRate: Int? = null,
+    )
+
+    @Serializable
+    data class MediaAttachmentDto(
+        val codec: String? = null,
+        val fileName: String? = null,
+        val mimeType: String? = null,
+        val index: Int
     )
 }
