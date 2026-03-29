@@ -660,6 +660,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
             deviceProfile = getDeviceProfile(
                 name = deviceInfo.name,
                 videoCodec = preferences.videoCodec,
+                transportContainer = preferences.transportContainer,
                 videoBitrate = videoBitrate,
                 audioBitrate = audioBitrate,
             ),
@@ -852,6 +853,9 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
         private const val PREF_VIDEO_CODEC_KEY = "pref_video_codec"
         private const val PREF_VIDEO_CODEC_DEFAULT = "h264"
 
+        private const val PREF_TRANSPORT_CONTAINER_KEY = "pref_transport_container"
+        private const val PREF_TRANSPORT_CONTAINER_DEFAULT = "ts"
+
         private const val PREF_AUDIO_KEY = "preferred_audioLang"
         private const val PREF_AUDIO_DEFAULT = "jpn"
 
@@ -917,6 +921,7 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
     private val SharedPreferences.epDetails by preferences.delegate(PREF_EP_DETAILS_KEY, PREF_EP_DETAILS_DEFAULT)
     private val SharedPreferences.quality by preferences.delegate(PREF_QUALITY_KEY, PREF_QUALITY_DEFAULT)
     private val SharedPreferences.videoCodec by preferences.delegate(PREF_VIDEO_CODEC_KEY, PREF_VIDEO_CODEC_DEFAULT)
+    private val SharedPreferences.transportContainer by preferences.delegate(PREF_TRANSPORT_CONTAINER_KEY, PREF_TRANSPORT_CONTAINER_DEFAULT)
     private val SharedPreferences.audioLang by preferences.delegate(PREF_AUDIO_KEY, PREF_AUDIO_DEFAULT)
     private val SharedPreferences.subLang by preferences.delegate(PREF_SUB_KEY, PREF_SUB_DEFAULT)
     private val SharedPreferences.burnSub by preferences.delegate(PREF_BURN_SUB_KEY, PREF_BURN_SUB_DEFAULT)
@@ -1159,6 +1164,13 @@ class Jellyfin(private val suffix: String) : Source(), UnmeteredSource {
             default = PREF_VIDEO_CODEC_DEFAULT,
             title = "Transcoding video codec",
             summary = "Video codec when transcoding. Does not affect 'Source' quality.",
+        )
+
+        screen.addEditTextPreference(
+            key = PREF_TRANSPORT_CONTAINER_KEY,
+            default = PREF_TRANSPORT_CONTAINER_DEFAULT,
+            title = "Transcoding transport container",
+            summary = "Used when transcoding. Options: ts (allows seeking outside buffer), mp4 (supports av1)",
         )
 
         screen.addEditTextPreference(

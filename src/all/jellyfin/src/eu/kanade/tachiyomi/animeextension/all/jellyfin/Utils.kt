@@ -115,6 +115,7 @@ object Constants {
 fun getDeviceProfile(
     name: String,
     videoCodec: String,
+    transportContainer: String,
     videoBitrate: Int,
     audioBitrate: Int,
 ): DeviceProfileDto {
@@ -161,7 +162,7 @@ fun getDeviceProfile(
             ),
             DeviceProfileDto.ProfileDto(
                 type = "Video",
-                container = "mp4",
+                container = transportContainer,
                 protocol = "hls",
                 audioCodec = "aac,mp3,ac3,opus,flac,vorbis",
                 videoCodec = videoCodec,
